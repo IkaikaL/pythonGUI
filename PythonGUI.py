@@ -1,128 +1,125 @@
-import PySimpleGUI as sg
+# import everything from tkinter module
+import tkinter
+from tkinter import *
+from tkinter import ttk
+import os
 
-import os.path
 
+def load_gmm():
+    global fileEntry
+    global savePathEntry
+    fileEntryString = fileEntry.get()
+    savePathEntryString = savePathEntry.get()
+    return tkinter.Button(os.system('python GMM-final_log.py ' + fileEntryString + ' ' + savePathEntryString))
 
-# First the window layout in 2 columns
+def load_supervised_model():
+    global gmmOutputEntry
+    gmmOutputEntryString = gmmOutputEntry.get()
+    return tkinter.Button(os.system('python RF_Supervised_model.py ' + gmmOutputEntryString))
 
+def load_supervised_model_output():
+    global supervisedModelLocationEntry
+    global maskedFilesEntry
+    global segmentedFilesEntry
+    global core300UmFilesEntry
+    supervisedModelLocationEntryString = supervisedModelLocationEntry.get()
+    maskedFilesEntryString = maskedFilesEntry.get()
+    segmentedFilesEntryString = segmentedFilesEntry.get()
+    core300UmFilesEntryString = core300UmFilesEntry.get()
+    return tkinter.Button(os.system('python RF_predict-all_monsif-7amo.py ' + supervisedModelLocationEntryString + ' ' + maskedFilesEntryString + ' ' + segmentedFilesEntryString + ' ' + core300UmFilesEntryString))
 
-file_list_column = [
+# create a tkinter window
 
-    [
+window = Tk()
 
-        sg.Text("Image Folder"),
+# Open window having dimension 100x100
 
-        sg.In(size=(25, 1), enable_events=True, key="-FOLDER-"),
+window.geometry('750x700')
 
-        sg.FolderBrowse(),
 
-    ],
+# Initialize a Label to display the User Input
 
-    [
+label = Label(window, text="Input the File Location for GMM", font="Courier 14 bold")
+label.pack()
 
-        sg.Listbox(
 
-            values=[], enable_events=True, size=(40, 20), key="-FILE LIST-"
+# Create an Entry widget to accept User Input
 
-        )
+fileEntry = Entry(window, width=40)
+fileEntry.focus_set()
+fileEntry.pack()
 
-    ],
+# Initialize a Label to display the User Input
 
-]
+label = Label(window, text="Input Save Location for GMM Output", font="Courier 14 bold")
+label.pack()
+# Create an Entry widget to accept User Input
 
+savePathEntry = Entry(window, width=40)
+savePathEntry.focus_set()
+savePathEntry.pack()
 
-# For now will only show the name of the file that was chosen
+# Create a Button to load file path
 
-image_viewer_column = [
+ttk.Button(window, text="Run GMM", width=20, command=load_gmm).pack(pady=20)
 
-    [sg.Text("Choose an image from list on left:")],
+# Initialize a Label to display the User Input
 
-    [sg.Text(size=(40, 1), key="-TOUT-")],
+label = Label(window, text="Input Location of GMM Output", font="Courier 14 bold")
+label.pack()
+# Create an Entry widget to accept User Input
 
-    [sg.Image(key="-IMAGE-")],
+gmmOutputEntry = Entry(window, width=40)
+gmmOutputEntry.focus_set()
+gmmOutputEntry.pack()
 
-]
+# Create a Button to load file path
 
+ttk.Button(window, text="Run RF Supervised Model", width=20, command=load_supervised_model).pack(pady=20)
 
-# ----- Full layout -----
+# Initialize a Label to display the User Input
 
-layout = [
+label = Label(window, text="Input Location of Supervised Model Output", font="Courier 14 bold")
+label.pack()
+# Create an Entry widget to accept User Input
 
-    [
+supervisedModelLocationEntry = Entry(window, width=40)
+supervisedModelLocationEntry.focus_set()
+supervisedModelLocationEntry.pack()
 
-        sg.Column(file_list_column),
+# Initialize a Label to display the User Input
 
-        sg.VSeperator(),
+label = Label(window, text="Input Location of Masked Files", font="Courier 14 bold")
+label.pack()
+# Create an Entry widget to accept User Input
 
-        sg.Column(image_viewer_column),
+maskedFilesEntry = Entry(window, width=40)
+maskedFilesEntry.focus_set()
+maskedFilesEntry.pack()
 
-    ]
+# Initialize a Label to display the User Input
 
-]
+label = Label(window, text="Input Location of Segmented Files", font="Courier 14 bold")
+label.pack()
+# Create an Entry widget to accept User Input
 
+segmentedFilesEntry = Entry(window, width=40)
+segmentedFilesEntry.focus_set()
+segmentedFilesEntry.pack()
 
-window = sg.Window("Image Viewer", layout)
+# Initialize a Label to display the User Input
 
+label = Label(window, text="Input Location of Core 300um Files", font="Courier 14 bold")
+label.pack()
+# Create an Entry widget to accept User Input
 
-# Run the Event Loop
+core300UmFilesEntry = Entry(window, width=40)
+core300UmFilesEntry.focus_set()
+core300UmFilesEntry.pack()
 
-while True:
+# Create a Button to load file path
 
-    event, values = window.read()
+ttk.Button(window, text="Run RF Predict", width=20, command=load_supervised_model_output).pack(pady=20)
 
-    if event == "Exit" or event == sg.WIN_CLOSED:
 
-        break
-
-    # Folder name was filled in, make a list of files in the folder
-
-    if event == "-FOLDER-":
-
-        folder = values["-FOLDER-"]
-
-        try:
-
-            # Get list of files in folder
-
-            file_list = os.listdir(folder)
-
-        except:
-
-            file_list = []
-
-
-        fnames = [
-
-            f
-
-            for f in file_list
-
-            if os.path.isfile(os.path.join(folder, f))
-
-            and f.lower().endswith((".png", ".gif"))
-
-        ]
-
-        window["-FILE LIST-"].update(fnames)
-
-    elif event == "-FILE LIST-":  # A file was chosen from the listbox
-
-        try:
-
-            filename = os.path.join(
-
-                values["-FOLDER-"], values["-FILE LIST-"][0]
-
-            )
-
-            window["-TOUT-"].update(filename)
-
-            window["-IMAGE-"].update(filename=filename)
-
-
-        except:
-
-            pass
-
-
-window.close()
+window.mainloop()
