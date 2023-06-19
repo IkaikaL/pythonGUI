@@ -20,6 +20,7 @@ import skimage
 filePath = str(sys.argv[1])
 savePath = str(sys.argv[2])
 workpath = r"" + filePath
+
 print(workpath)
 
 #C:\Users\mhassa9\CT Scan - work\Correction\Core2_AT\15-20
