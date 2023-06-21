@@ -13,10 +13,14 @@ import skimage.io
 import skimage.morphology
 import skimage.exposure
 import sys
-filePath = str(sys.argv[1])
+from pathlib import Path
+import fnmatch
+import os
+
 #img = cv2.imread('BSE_Image.jpg')
-img = skimage.io.imread(r'' + filePath)
-print(filePath)
+gmmOutput = fnmatch.filter(os.listdir(str(Path().absolute())), 'S-M-C-coreA_300um_0*.tif')
+img = skimage.io.imread(r'' + str(Path().absolute()) + '\\' + gmmOutput[0])
+
 
 #C:\Users\mhassa9\CT Scan - work\Correction\Masked_images\in\M_in-Avg-coreA_300um_0385.tif
 
@@ -118,7 +122,7 @@ df['Variance s3'] = variance_img1  #Add column to original dataframe
 #######################################################################################################################
 
 
-segmented = skimage.io.imread(r'' + filePath)
+segmented = skimage.io.imread(r'' + str(Path().absolute()) + '\\' + gmmOutput[0])
 
 
 

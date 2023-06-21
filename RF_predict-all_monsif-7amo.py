@@ -115,17 +115,11 @@ import multiprocessing as mp
 from multiprocessing import Pool
 from multiprocessing import Process
 import sys
+from pathlib import Path
 
-supervisedModelOutputFile = str(sys.argv[1])
-maskedFileLocation = str(sys.argv[2])
-segmentedFileLocation = str(sys.argv[3])
-coreA300umFileLocation = str(sys.argv[4])
-print(supervisedModelOutputFile)
-print(maskedFileLocation)
-print(segmentedFileLocation)
-print(coreA300umFileLocation)
 
-filename = "" + supervisedModelOutputFile
+
+filename = "XCT_421-A_300um-final"
 
 #To test the model on future datasets
 loaded_model = pickle.load(open(filename, 'rb'))
@@ -135,7 +129,7 @@ loaded_model = pickle.load(open(filename, 'rb'))
 #for file in glob.glob(path):
 
 def predict_scan(input1):
-    img = skimage.io.imread(r"" + maskedFileLocation + "\\" + str(input1))
+    img = skimage.io.imread(r"" + str(Path().absolute()) + "\\" + str(input1))
     X = feature_extraction(img)
     result = loaded_model.predict(X)
     
@@ -145,14 +139,14 @@ def predict_scan(input1):
     plt.imshow(segmented, cmap ='plasma')
     
     name = input1.split('M-C-coreA_')
-    cv2.imwrite(r"" + segmentedFileLocation + "\\" + name[1], imgg)      #cmap ='plasma'
+    cv2.imwrite(r"" + str(Path().absolute()) + "\\" + name[1], imgg)      #cmap ='plasma'
  
     
 if __name__ == '__main__':
 
     start_time = datetime.now()
     
-    x = open(r"" + coreA300umFileLocation + '\list').read().splitlines()
+    x = open(r"" + str(Path().absolute()) + '\list').read().splitlines()
     lst = list(x)
     processes = []
     for i in lst:

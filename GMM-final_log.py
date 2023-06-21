@@ -12,21 +12,19 @@ import sys
 import numpy as np
 import cv2
 
+from pathlib import Path
+
 from scipy import stats
 
 import skimage
 
-
-filePath = str(sys.argv[1])
-savePath = str(sys.argv[2])
-workpath = r"" + filePath
-
+workpath = r"" + str(Path().absolute()) + "\Masked-All"
 print(workpath)
 
 #C:\Users\mhassa9\CT Scan - work\Correction\Core2_AT\15-20
 # 130, 270, 410, 550, 690, 830
 
-savepath = r"" + savePath
+savepath = r"" + str(Path().absolute())
 print(savepath)
 for i in [500]:
     
