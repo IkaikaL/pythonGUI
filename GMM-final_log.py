@@ -11,21 +11,19 @@ from matplotlib.ticker import AutoMinorLocator
 import sys
 import numpy as np
 import cv2
-
 from pathlib import Path
 
 from scipy import stats
 
 import skimage
 
+
 workpath = r"" + str(Path().absolute()) + "\Masked-All"
-print(workpath)
 
 #C:\Users\mhassa9\CT Scan - work\Correction\Core2_AT\15-20
 # 130, 270, 410, 550, 690, 830
 
 savepath = r"" + str(Path().absolute())
-print(savepath)
 for i in [500]:
     
     filename = 'M-C-coreA_300um_0' + str(i) + '.tif'
@@ -109,16 +107,18 @@ for i in [500]:
     
     gmm_model.weights_
     
-    print (gmm_model.means_)
-    print ('-.-.-.-.-.-.-.-.-.-')
-    print (gmm_model.weights_)
-    print ('-.-.-.-.-.-.-.-.-.-')
-    print (gmm_model.covariances_)
+    #print (gmm_model.means_)
+    #print ('-.-.-.-.-.-.-.-.-.-')
+    #print (gmm_model.weights_)
+    #print ('-.-.-.-.-.-.-.-.-.-')
+    #print (gmm_model.covariances_)
     
     
-    print ('--------------------------')
+    #print ('--------------------------')
+
     
-    
+
+print('done')
 # =============================================================================
 #     
 #     # Plot histograms and gaussian curves

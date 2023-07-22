@@ -55,7 +55,7 @@ for theta in range(2):   #Define number of thetas
                 fimg = cv2.filter2D(img2, cv2.CV_8UC3, kernel)
                 filtered_img = fimg.reshape(-1)
                 df[gabor_label] = filtered_img  #Labels columns as Gabor1, Gabor2, etc.
-                print(gabor_label, ': theta=', theta, ': sigma=', sigma, ': lamda=', lamda, ': gamma=', gamma)
+                #print(gabor_label, ': theta=', theta, ': sigma=', sigma, ': lamda=', lamda, ': gamma=', gamma)
                 num += 1  #Increment for gabor column label
                 
 ########################################
@@ -139,7 +139,7 @@ segmented = skimage.io.imread(r'' + str(Path().absolute()) + '\\' + gmmOutput[0]
 labeled_img1 = segmented.reshape(-1)
 df['Labels'] = labeled_img1
 
-print(df.head())
+#print(df.head())
 
 #df.to_csv("Gabor.csv")
 
@@ -205,9 +205,9 @@ from sklearn import metrics
 #Print the prediction accuracy
 
 #First check the accuracy on training data. This will be higher than test data prediction accuracy.
-print ("Accuracy on training data = ", metrics.accuracy_score(y_train, prediction_test_train))
+#print ("Accuracy on training data = ", metrics.accuracy_score(y_train, prediction_test_train))
 #Check accuracy on test dataset. If this is too low compared to train it indicates overfitting on training data.
-print ("Accuracy = ", metrics.accuracy_score(y_test, prediction_test))
+#print ("Accuracy = ", metrics.accuracy_score(y_test, prediction_test))
 
 
 
@@ -220,7 +220,7 @@ print ("Accuracy = ", metrics.accuracy_score(y_test, prediction_test))
 
 feature_list = list(X.columns)
 feature_imp = pd.Series(model.feature_importances_,index=feature_list).sort_values(ascending=False)
-print(feature_imp)
+#print(feature_imp)
 
 # =============================================================================
 # result = model.predict(X)
@@ -255,3 +255,6 @@ from matplotlib import pyplot as plt
 plt.imshow(segmented, cmap ='plasma')
 cv2.imwrite('segmented_check.tif', imgg)      #cmap ='jet'
 #plt.imsave('segmented_sur4.jpg', imgg, cmap ='plasma')
+
+
+print("done")

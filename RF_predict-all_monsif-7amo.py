@@ -12,6 +12,7 @@ import skimage.filters
 import skimage.io
 import skimage.morphology
 import skimage.exposure
+import os
 
 from datetime import datetime
 start_time = datetime.now()
@@ -129,7 +130,7 @@ loaded_model = pickle.load(open(filename, 'rb'))
 #for file in glob.glob(path):
 
 def predict_scan(input1):
-    img = skimage.io.imread(r"" + str(Path().absolute()) + "\\" + str(input1))
+    img = skimage.io.imread(r"" + str(Path().absolute()) + "\\Masked-All\\" + str(input1))
     X = feature_extraction(img)
     result = loaded_model.predict(X)
     
@@ -139,14 +140,15 @@ def predict_scan(input1):
     plt.imshow(segmented, cmap ='plasma')
     
     name = input1.split('M-C-coreA_')
-    cv2.imwrite(r"" + str(Path().absolute()) + "\\" + name[1], imgg)      #cmap ='plasma'
+    cv2.imwrite(r"" + str(Path().absolute()) + "\\Segmented-All\\" + name[1], imgg)      #cmap ='plasma'
  
     
 if __name__ == '__main__':
 
     start_time = datetime.now()
-    
-    x = open(r"" + str(Path().absolute()) + '\list').read().splitlines()
+    if not os.path.exists(str(Path().absolute()) + "\\Segmented-All"):
+        os.makedirs(str(Path().absolute()) + "\\Segmented-All")
+    x = os.listdir(str(Path().absolute()) + "\\Masked-All\\")
     lst = list(x)
     processes = []
     for i in lst:
@@ -159,6 +161,6 @@ if __name__ == '__main__':
         
         
     end_time = datetime.now()
-    print('Duration: {}'.format(end_time - start_time))
+    #print('Duration: {}'.format(end_time - start_time))
 
-
+print("done")

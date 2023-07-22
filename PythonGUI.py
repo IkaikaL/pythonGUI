@@ -3,63 +3,102 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 import os
+import subprocess
+import time
+import threading
 
 
-def load_gmm():
-    return tkinter.Button(os.system('python GMM-final_log.py'))
+class Main_Frame(object):
+    def __init__(self, window=None):
+        # save root reference
+        self.window = window
 
-def load_supervised_model():
-    return tkinter.Button(os.system('python RF_Supervised_model.py'))
+        self.steps = ["incomplete", "incomplete", "incomplete"]
 
-def load_supervised_model_output():
-    return tkinter.Button(os.system('python RF_predict-all_monsif-7amo.py'))
+        # start button calls the "initialization" function bar_init, you can pass a variable in here if desired
+        # self.start_button = ttk.Button(rightFrame, text='Start bar', command=lambda: self.bar_init(2500))
+        # self.start_button.pack()
 
-# create a tkinter window
+        create_label(frame=leftFrame,
+                     text="Step 1. Move/Create a \"Masked-All\" folder \n inside the current directory", padding_y=10,
+                     padding_x=20)
+
+        create_label(leftFrame, text="Step 2. Run GMM", padding_y=10, padding_x=0)
+
+
+
+
+        create_label(leftFrame, text="Step 3. Run Supervised Model", padding_y=10, padding_x=0)
+
+
+        create_label(leftFrame, text="Step 4. Predict all Monsif", padding_y=(10, 0), padding_x=0)
+
+
+        create_label(leftFrame, text="Status Bar", padding_y=(20 ,0), padding_x=0)
+        # the progress bar will be referenced in the "bar handling" and "work" threads
+        self.load_bar = ttk.Progressbar(leftFrame)
+        self.load_bar.pack(pady=(10), padx=10)
+        self.load_gmm_button = ttk.Button(leftFrame, text="Run Program", width=40,
+                                          command=lambda:  self.bar_init(var=2500))
+        self.load_gmm_button.pack(pady=(10, 20),padx=10)
+        # run mainloop
+        self.window.mainloop()
+
+    def bar_init(self, var):
+        # first layer of isolation, note var being passed along to the self.start_bar function
+        # target is the function being started on a new thread, so the "bar handler" thread
+        self.start_bar_thread = threading.Thread(target=self.start_bar, args=(var, ))
+        # start the bar handling thread
+        self.start_bar_thread.start()
+
+    def start_bar(self, var):
+        # the load_bar needs to be configured for indeterminate amount of bouncing
+        self.load_bar.config(mode='indeterminate', maximum=500, value=0)
+        # 8 here is for speed of bounce
+        self.load_bar.start(8)
+        # start the work-intensive thread, again a var can be passed in here too if desired
+        self.work_thread = threading.Thread(target=self.work_task, args=(var,))
+        self.work_thread.start()
+        # close the work thread
+        self.work_thread.join()
+        # stop the indeterminate bouncing
+        self.load_bar.stop()
+        # reconfigure the bar so it appears reset
+        self.load_bar.config(value=0, maximum=0)
+
+    def work_task(self, wait_time):
+        output = subprocess.run('python GMM-final_log.py', stdout=subprocess.PIPE)
+        print(output.stdout.decode('utf-8'))
+        if output.stdout.decode('utf-8') != "":
+            self.load_bar.stop()
+
+        self.load_bar.start()
+        output = subprocess.run('python RF_Supervised_model.py', stdout=subprocess.PIPE)
+        print(output.stdout.decode('utf-8'))
+        if output.stdout.decode('utf-8') != "":
+            self.load_bar.stop()
+
+        self.load_bar.start()
+        output = subprocess.run('python RF_predict-all_monsif-7amo.py', stdout=subprocess.PIPE)
+        print(output.stdout.decode('utf-8'))
+        if output.stdout.decode('utf-8') != "":
+            self.load_bar.stop()
+
+        self.load_bar.stop()
+
+
+def create_label(frame, text, padding_y, padding_x):
+    ttk.Label(frame, text=text, font="Courier 14 bold").pack(pady=padding_y, padx=padding_x)
+
 
 window = Tk()
 
 
-window.geometry('1300x300')
+window.geometry('500x350')
 leftFrame = Frame(window)
 leftFrame.pack(side=LEFT, anchor='center', fill='both')
 
-rightFrame = Frame(window)
-rightFrame.pack(side=RIGHT, anchor='center', fill='both')
 
-# Initialize a Label to display the User Input
-
-label = Label(leftFrame, text="Step 1. Create Masked-All folder inside directory", font="Courier 14 bold")
-
-label.pack()
-
-# Initialize a Label to display the User Input
-
-label = Label(leftFrame, text="Step 2. Run GMM", font="Courier 14 bold")
-label.pack()
-
-# Create a Button to load file path
-
-ttk.Button(leftFrame, text="Run GMM", width=20, command=load_gmm).pack(pady=20)
-
-# Initialize a Label to display the User Input
-
-label = Label(window, text="Run Supervised Model", font="Courier 14 bold")
-label.pack(pady=5)
-
-# Create a Button to load file path
-
-ttk.Button(window, text="Run RF Supervised Model", width=20, command=load_supervised_model).pack(pady=20)
-
-# Initialize a Label to display the User Input
-
-label = Label(rightFrame, text="Predict all Monsif", font="Courier 14 bold")
-label.pack()
-# Create an Entry widget to accept User Input
-
-
-# Create a Button to load file path
-
-ttk.Button(rightFrame, text="Run RF Predict", width=20, command=load_supervised_model_output).pack(pady=20)
-
+Main_Frame(window=window)
 
 window.mainloop()
