@@ -1,1 +1,1 @@
-# Python GUI for processing the soil sample images
+# Python GUI executable program for code that processes soil sample images
