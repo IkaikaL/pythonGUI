@@ -17,9 +17,12 @@ from pathlib import Path
 import fnmatch
 import os
 
-#img = cv2.imread('BSE_Image.jpg')
-gmmOutput = fnmatch.filter(os.listdir(str(Path().absolute())), 'S-M-C-coreA_300um_0*.tif')
-img = skimage.io.imread(r'' + str(Path().absolute()) + '\\' + gmmOutput[0])
+gmmOutput = fnmatch.filter(os.listdir(str(Path().absolute())), 'S-*_*_0*.tif')
+splitGmmOutput = gmmOutput[0].split('_')
+splitGmmOutput = splitGmmOutput[2].split('.')
+specificImageNumber = int(splitGmmOutput[0])
+maskedAllFile = fnmatch.filter(os.listdir(str(Path().absolute()) + '\\Masked-All'), 'M-C-core*_*_0' + str(specificImageNumber) +'.tif')
+img = skimage.io.imread(r'' + str(Path().absolute()) + '\\Masked-All\\' + maskedAllFile[0])
 
 
 #C:\Users\mhassa9\CT Scan - work\Correction\Masked_images\in\M_in-Avg-coreA_300um_0385.tif
@@ -120,7 +123,6 @@ df['Variance s3'] = variance_img1  #Add column to original dataframe
 
 
 #######################################################################################################################
-
 
 segmented = skimage.io.imread(r'' + str(Path().absolute()) + '\\' + gmmOutput[0])
 
@@ -257,4 +259,4 @@ cv2.imwrite('segmented_check.tif', imgg)      #cmap ='jet'
 #plt.imsave('segmented_sur4.jpg', imgg, cmap ='plasma')
 
 
-print("done")
+print("Step 3 is done")

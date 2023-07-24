@@ -12,21 +12,27 @@ import sys
 import numpy as np
 import cv2
 from pathlib import Path
+import os
 
 from scipy import stats
 
 import skimage
 
+#selectedFile = sys.argv[1]
+selectedFile = 500
 
-workpath = r"" + str(Path().absolute()) + "\Masked-All"
+getFileName = os.listdir(str(Path().absolute()) + "\\Masked-All")
+fileType = getFileName[0].split("_")
+
+workpath = r"" + str(Path().absolute()) + "\\Masked-All"
 
 #C:\Users\mhassa9\CT Scan - work\Correction\Core2_AT\15-20
 # 130, 270, 410, 550, 690, 830
 
 savepath = r"" + str(Path().absolute())
-for i in [500]:
+for i in [selectedFile]:
     
-    filename = 'M-C-coreA_300um_0' + str(i) + '.tif'
+    filename = fileType[0] + "_" + fileType[1] + "_" + "0" + str(i) + '.tif'
     
     im_phase = skimage.io.imread(workpath + "\\" + filename)
     
@@ -41,11 +47,14 @@ for i in [500]:
     
     gmm_model = GMM(n_components=k, random_state=2, covariance_type='full').fit(img2)  #tied works better than full, random_state=0
     
-      
+    sortedLabels = sorted(gmm_model.means_)
+    print(sortedLabels)
         
     
     
     gmm_labels = gmm_model.predict(img2)
+    print(set(gmm_labels))
+    print(sorted(gmm_labels))
     
     import pandas as pd
     
@@ -53,25 +62,25 @@ for i in [500]:
     
     
     d = pd.DataFrame()
+
     d['labels'] = gmm_labels
-    
-    #df['column name'] = df['column name'].replace(['old value'],'new value')
-    
-    
-    d['labels'] = d['labels'].replace([0],22)
-    d['labels'] = d['labels'].replace([1],666)
-    d['labels'] = d['labels'].replace([2],33)
-    d['labels'] = d['labels'].replace([3],11)
-    #d['labels'] = d['labels'].replace([4],33)
-   
-    d['labels'] = d['labels'].replace([666],0)
-    d['labels'] = d['labels'].replace([11],1)
-    d['labels'] = d['labels'].replace([22],2)
-    d['labels'] = d['labels'].replace([33],3)
-    #d['labels'] = d['labels'].replace([44],4)
-    
-    
+
+    # df['column name'] = df['column name'].replace(['old value'],'new value')
+
+    d['labels'] = d['labels'].replace([0], 00)
+    d['labels'] = d['labels'].replace([1], 33)
+    d['labels'] = d['labels'].replace([2], 22)
+    d['labels'] = d['labels'].replace([3], 11)
+    d['labels'] = d['labels'].replace([4], 44)
+
+    d['labels'] = d['labels'].replace([00], 0)
+    d['labels'] = d['labels'].replace([11], 3)
+    d['labels'] = d['labels'].replace([22], 2)
+    d['labels'] = d['labels'].replace([33], 1)
+    d['labels'] = d['labels'].replace([44], 4)
+
     gmm_labels = d['labels']
+    print(gmm_labels)
     
     
     
@@ -107,7 +116,7 @@ for i in [500]:
     
     gmm_model.weights_
     
-    #print (gmm_model.means_)
+    print (gmm_model.means_)
     #print ('-.-.-.-.-.-.-.-.-.-')
     #print (gmm_model.weights_)
     #print ('-.-.-.-.-.-.-.-.-.-')
@@ -118,7 +127,7 @@ for i in [500]:
 
     
 
-print('done')
+print('Step 2 is done')
 # =============================================================================
 #     
 #     # Plot histograms and gaussian curves

@@ -163,4 +163,4 @@ if __name__ == '__main__':
     end_time = datetime.now()
     #print('Duration: {}'.format(end_time - start_time))
 
-print("done")
+print("Step 4 is done")
