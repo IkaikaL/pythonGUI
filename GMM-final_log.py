@@ -18,8 +18,7 @@ from scipy import stats
 
 import skimage
 
-#selectedFile = sys.argv[1]
-selectedFile = 500
+selectedFile = sys.argv[1]
 
 getFileName = os.listdir(str(Path().absolute()) + "\\Masked-All")
 fileType = getFileName[0].split("_")
@@ -47,25 +46,41 @@ for i in [selectedFile]:
     
     gmm_model = GMM(n_components=k, random_state=2, covariance_type='full').fit(img2)  #tied works better than full, random_state=0
     
-    sortedLabels = sorted(gmm_model.means_)
-    print(sortedLabels)
-        
-    
-    
+
+    compareLabels = gmm_model.means_
+    temp = sorted(gmm_model.means_)
+    sortedLabels = np.array(temp)
+
+
     gmm_labels = gmm_model.predict(img2)
-    print(set(gmm_labels))
-    print(sorted(gmm_labels))
-    
+
+    sortedIndex = 0
+    unsortedIndex = 0
+    while unsortedIndex < len(gmm_model.means_):
+        if compareLabels[unsortedIndex][0] == sortedLabels[sortedIndex][0]:
+            gmm_labels[[sortedIndex, unsortedIndex]] = gmm_labels[[unsortedIndex, sortedIndex]]
+            compareLabels[[sortedIndex, unsortedIndex]] = compareLabels[[unsortedIndex, sortedIndex]]
+            sortedIndex += 1
+            unsortedIndex = sortedIndex
+        else:
+            unsortedIndex += 1
+
+
+    #print(gmm_labels)
+    #print(gmm_model.means_)
+
     import pandas as pd
+
     
     from pandas import DataFrame
     
-    
+    '''''
     d = pd.DataFrame()
-
+    np.set_printoptions(threshold=sys.maxsize)
+    print(gmm_labels)
     d['labels'] = gmm_labels
 
-    # df['column name'] = df['column name'].replace(['old value'],'new value')
+     df['column name'] = df['column name'].replace(['old value'],'new value')
 
     d['labels'] = d['labels'].replace([0], 00)
     d['labels'] = d['labels'].replace([1], 33)
@@ -74,19 +89,20 @@ for i in [selectedFile]:
     d['labels'] = d['labels'].replace([4], 44)
 
     d['labels'] = d['labels'].replace([00], 0)
-    d['labels'] = d['labels'].replace([11], 3)
+    d['labels'] = d['labels'].replace([11], 1)
     d['labels'] = d['labels'].replace([22], 2)
-    d['labels'] = d['labels'].replace([33], 1)
+    d['labels'] = d['labels'].replace([33], 3)
     d['labels'] = d['labels'].replace([44], 4)
 
     gmm_labels = d['labels']
     print(gmm_labels)
-    
+    '''''
     
     
     #Put numbers back to original shape so we can reconstruct segmented image
     original_shape = im_phase.shape
-    segmented = gmm_labels.values.reshape(original_shape[0], original_shape[1])
+    segmented = gmm_labels.reshape(original_shape[0], original_shape[1])
+    #print(segmented)
     #values.
     
     
@@ -116,7 +132,7 @@ for i in [selectedFile]:
     
     gmm_model.weights_
     
-    print (gmm_model.means_)
+    #print (gmm_model.means_)
     #print ('-.-.-.-.-.-.-.-.-.-')
     #print (gmm_model.weights_)
     #print ('-.-.-.-.-.-.-.-.-.-')
