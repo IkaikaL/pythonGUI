@@ -16,9 +16,12 @@ import sys
 from pathlib import Path
 import fnmatch
 import os
+import re
 
 gmmOutput = fnmatch.filter(os.listdir(str(Path().absolute())), 'S-*_*_0*.tif')
+
 splitGmmOutput = gmmOutput[0].split('_')
+microMeterNumber = re.sub('\D', '', splitGmmOutput[1])
 splitGmmOutput = splitGmmOutput[2].split('.')
 specificImageNumber = int(splitGmmOutput[0])
 maskedAllFile = fnmatch.filter(os.listdir(str(Path().absolute()) + '\\Masked-All'), 'M-C-core*_*_0' + str(specificImageNumber) +'.tif')
@@ -241,7 +244,7 @@ feature_imp = pd.Series(model.feature_importances_,index=feature_list).sort_valu
 import pickle
 
 #Save the trained model as pickle string to disk for future use
-filename = "XCT_421-A_300um-final"
+filename = "XCT_421-A_" + str(microMeterNumber) + "um-final"
 pickle.dump(model, open(filename, 'wb'))
 
 #To test the model on future datasets

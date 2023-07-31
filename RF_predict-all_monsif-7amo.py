@@ -117,10 +117,15 @@ from multiprocessing import Pool
 from multiprocessing import Process
 import sys
 from pathlib import Path
+import fnmatch
 
 
-
-filename = "XCT_421-A_300um-final"
+gmmOutput = fnmatch.filter(os.listdir(str(Path().absolute())), 'S-*_*_0*.tif')
+splitGmmOutput = gmmOutput[0].split('_')
+splitGmmOutput = splitGmmOutput[2].split('.')
+specificImageNumber = int(splitGmmOutput[0])
+filename = fnmatch.filter(os.listdir(str(Path().absolute())), 'XCT_421-A_*')
+filename = filename[0]
 
 #To test the model on future datasets
 loaded_model = pickle.load(open(filename, 'rb'))

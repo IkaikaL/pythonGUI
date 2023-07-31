@@ -20,6 +20,7 @@ import skimage
 
 selectedFile = sys.argv[1]
 
+
 getFileName = os.listdir(str(Path().absolute()) + "\\Masked-All")
 fileType = getFileName[0].split("_")
 
@@ -47,27 +48,28 @@ for i in [selectedFile]:
     gmm_model = GMM(n_components=k, random_state=2, covariance_type='full').fit(img2)  #tied works better than full, random_state=0
     
 
-    compareLabels = gmm_model.means_
-    temp = sorted(gmm_model.means_)
-    sortedLabels = np.array(temp)
+    #compareLabels = gmm_model.means_
+    #temp = sorted(gmm_model.means_)
+    #sortedLabels = np.array(temp)
 
 
+    #gmm_labels = gmm_model.predict(img2)
+# Compare labels with sorted means
+    means = np.squeeze(gmm_model.means_)
+    sorted_indices = np.argsort(means)
+    
+    # Predict labels
     gmm_labels = gmm_model.predict(img2)
+    
+    # Create a mapping from original component labels to new labels based on sorted means
+    mapping = {original_label: new_label for new_label, original_label in enumerate(sorted_indices)}
+    
+    # Apply the mapping to the predicted labels
+    new_labels = np.vectorize(mapping.get)(gmm_labels)
+    
+    # Print the new labels
+    print(new_labels)
 
-    sortedIndex = 0
-    unsortedIndex = 0
-    while unsortedIndex < len(gmm_model.means_):
-        if compareLabels[unsortedIndex][0] == sortedLabels[sortedIndex][0]:
-            gmm_labels[[sortedIndex, unsortedIndex]] = gmm_labels[[unsortedIndex, sortedIndex]]
-            compareLabels[[sortedIndex, unsortedIndex]] = compareLabels[[unsortedIndex, sortedIndex]]
-            sortedIndex += 1
-            unsortedIndex = sortedIndex
-        else:
-            unsortedIndex += 1
-
-
-    #print(gmm_labels)
-    #print(gmm_model.means_)
 
     import pandas as pd
 
@@ -101,7 +103,7 @@ for i in [selectedFile]:
     
     #Put numbers back to original shape so we can reconstruct segmented image
     original_shape = im_phase.shape
-    segmented = gmm_labels.reshape(original_shape[0], original_shape[1])
+    segmented = new_labels.reshape(original_shape[0], original_shape[1])
     #print(segmented)
     #values.
     
